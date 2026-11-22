@@ -1,0 +1,10 @@
+{
+  "read_time": 3,
+  "result_time": 5,
+  "scoreboard_time": 6,
+  "points_first": 1000,
+  "points_step": 100,
+  "points_min": 100,
+  "max_players": 60,
+  "title": "Feuerwehr-Quiz"
+}

@@ -1,0 +1,76 @@
+[
+  {
+    "id": "feuerwehr",
+    "name": "Feuerwehr-Grundlagen",
+    "questions": [
+      {
+        "type": "multi",
+        "text": "Welche Nummer wählst du im Notfall für die Feuerwehr?",
+        "options": [
+          "110",
+          "112",
+          "115",
+          "116 117"
+        ],
+        "correct": [
+          1
+        ],
+        "time": 15
+      },
+      {
+        "type": "yesno",
+        "text": "Brennendes Fett darf mit Wasser gelöscht werden.",
+        "options": [
+          "Ja",
+          "Nein"
+        ],
+        "correct": [
+          1
+        ],
+        "time": 10
+      },
+      {
+        "type": "multi",
+        "text": "Welche Dinge braucht ein Feuer (Verbrennungsdreieck)?",
+        "options": [
+          "Brennstoff",
+          "Sauerstoff",
+          "Zündenergie (Wärme)",
+          "Wasser"
+        ],
+        "correct": [
+          0,
+          1,
+          2
+        ],
+        "time": 20
+      },
+      {
+        "type": "multi",
+        "text": "Zu welcher Brandklasse gehören Brände fester Stoffe wie Holz oder Papier?",
+        "options": [
+          "Brandklasse A",
+          "Brandklasse B",
+          "Brandklasse C",
+          "Brandklasse D"
+        ],
+        "correct": [
+          0
+        ],
+        "time": 15
+      },
+      {
+        "type": "yesno",
+        "text": "Ein Feuerlöscher darf nach einem Einsatz, auch wenn er nur teilweise entleert wurde, einfach zurückgehängt werden.",
+        "options": [
+          "Ja",
+          "Nein"
+        ],
+        "correct": [
+          1
+        ],
+        "time": 15
+      }
+    ]
+  }
+]

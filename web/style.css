@@ -1,0 +1,49 @@
+/* Feuerwehr-Design: Signalrot, Anthrazit, Warngelb */
+:root {
+  --bg: #141211; --bg2: #26221f; --fg: #f6f3ef; --muted: #aaa39b; --accent: #d6001c; --accent2: #ff6a13; --yellow: #ffd400;
+  --line: #4a4440;
+  --c0: #d6001c; --c1: #1769e0; --c2: #f2b705; --c3: #1f9d55;
+  --yes: #1f9d55; --no: #d6001c;
+  --radius: 16px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: radial-gradient(circle at 15% 0%, #3d1511 0%, var(--bg) 55%);
+  color: var(--fg); -webkit-tap-highlight-color: transparent;
+}
+/* Absperrband oben */
+body::before {
+  content: ""; position: fixed; top: 0; left: 0; right: 0; height: 8px; z-index: 50;
+  background: repeating-linear-gradient(-45deg, #d6001c 0 14px, #f6f3ef 14px 28px);
+}
+.display { font-family: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif; text-transform: uppercase; letter-spacing: .04em; font-weight: 400; }
+button { font: inherit; cursor: pointer; border: 0; color: inherit; }
+input, textarea, select { font: inherit; color: inherit; }
+.hidden { display: none !important; }
+.brand { display: flex; align-items: center; gap: 1.2rem; }
+.brand img { height: clamp(3.5rem, 11vh, 7rem); width: auto; }
+
+/* Buttons */
+.btn {
+  background: var(--accent); color: #fff; padding: .7em 1.3em; border-radius: 10px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .04em; transition: transform .08s, filter .15s;
+}
+.btn:hover { filter: brightness(1.15); }
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn.ghost { background: rgba(255,255,255,.1); }
+.btn.danger { background: #8f1020; }
+.btn.small { padding: .4em .8em; font-size: .8rem; border-radius: 8px; }
+
+/* Optionsfarben (Gelb bekommt dunkle Schrift) */
+.c0 { --oc: var(--c0); } .c1 { --oc: var(--c1); } .c2 { --oc: var(--c2); } .c3 { --oc: var(--c3); }
+.cyes { --oc: var(--yes); } .cno { --oc: var(--no); }
+.opts .c2, .answers .c2 { color: #1a1200; }
+
+/* Timer */
+.bar { height: 12px; background: rgba(255,255,255,.12); border-radius: 99px; overflow: hidden; }
+.bar > i { display: block; height: 100%; background: linear-gradient(90deg, #ffd400, #ff8a00); border-radius: 99px; }
+.bar > i.low { background: linear-gradient(90deg, #ff6a13, #d6001c); animation: blink 1s infinite; }
+@keyframes blink { 50% { opacity: .55; } }

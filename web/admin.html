@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feuerwehr-Quiz – Admin</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+  body { height: auto; min-height: 100%; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  .top { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .top h1 { margin: 0; font-size: 2rem; flex: 1; }
+  a.btn { text-decoration: none; display: inline-block; }
+  .status { background: var(--bg2); border-radius: 14px; padding: .8rem 1rem; display: flex; gap: .8rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.2rem; }
+  .status .grow { flex: 1; color: var(--muted); }
+  .status b { color: var(--fg); }
+  .list { display: flex; flex-direction: column; gap: .8rem; }
+  .item { background: var(--bg2); border-radius: 14px; padding: 1rem; display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; border: 2px solid transparent; }
+  .item.sel { border-color: var(--yellow); }
+  .item .nm { flex: 1; min-width: 10rem; }
+  .item .nm b { font-size: 1.1rem; } .item .nm span { color: var(--muted); font-size: .9rem; display: block; }
+  .field { display: flex; flex-direction: column; gap: .3rem; margin-bottom: 1rem; }
+  .field label, .lbl { color: var(--muted); font-size: .85rem; font-weight: 600; }
+  input[type=text], input[type=number], textarea, select { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: .6rem .8rem; width: 100%; }
+  textarea { resize: vertical; min-height: 4.2rem; }
+  input:focus, textarea:focus, select:focus { outline: 2px solid var(--accent); border-color: transparent; }
+  .q { background: var(--bg2); border-radius: 14px; padding: 1rem; margin-bottom: 1rem; }
+  .qtop { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; margin-bottom: .8rem; }
+  .qtop .num { font-weight: 800; font-size: 1.1rem; }
+  .qtop select { width: auto; flex: 1; min-width: 12rem; }
+  .qtop .time { display: flex; align-items: center; gap: .4rem; color: var(--muted); font-size: .85rem; }
+  .qtop .time input { width: 5rem; }
+  .opt { display: flex; align-items: center; gap: .6rem; margin-top: .5rem; }
+  .opt .tag { flex: none; width: 2rem; height: 2rem; border-radius: 8px; background: var(--oc); display: grid; place-items: center; font-weight: 800; }
+  .opt input[type=checkbox], .opt input[type=radio] { width: 1.4rem; height: 1.4rem; accent-color: #5ee4a3; flex: none; }
+  .yn { display: flex; gap: 1rem; }
+  .yn label { flex: 1; display: flex; align-items: center; gap: .6rem; padding: .8rem 1rem; border-radius: 10px; background: var(--bg); cursor: pointer; font-weight: 700; }
+  .yn input { accent-color: #5ee4a3; width: 1.3rem; height: 1.3rem; }
+  .actions { display: flex; gap: .6rem; flex-wrap: wrap; position: sticky; bottom: 0; background: linear-gradient(transparent, var(--bg) 40%); padding: 1.5rem 0 1rem; }
+  .msg { padding: .7rem 1rem; border-radius: 10px; margin-bottom: 1rem; }
+  .msg.err { background: #5b1b28; } .msg.ok { background: #1b4b2c; }
+  .empty { color: var(--muted); text-align: center; padding: 2rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1 class="display">🚒 Quiz – Admin</h1>
+    <a class="btn ghost" href="/host" target="_blank">Spielbildschirm öffnen ↗</a>
+  </div>
+  <div id="status" class="status"></div>
+  <div id="msg"></div>
+  <div id="view"></div>
+</div>
+<script src="/static/common.js"></script>
+<script src="/static/admin.js"></script>
+</body>
+</html>
