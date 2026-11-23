@@ -184,6 +184,30 @@ class Quizzes:
             write_json("quizzes.json", items)
             return quiz
 
+    def import_many(self, items):
+        """Importiert Fragerunden (immer mit neuer ID). Gibt (importierte Namen, Fehlermeldungen) zurück."""
+        done, errors = [], []
+        with self.lock:
+            stored = self.all()
+            names = {q["name"].lower() for q in stored}
+            for n, item in enumerate(items, 1):
+                label = item.get("name") if isinstance(item, dict) and item.get("name") else f"Runde {n}"
+                try:
+                    quiz = clean_quiz(item)
+                except ValueError as e:
+                    errors.append(f"{label}: {e}")
+                    continue
+                base, k = quiz["name"], 1
+                while quiz["name"].lower() in names:
+                    k += 1
+                    quiz["name"] = f"{base[:72]} ({k})"
+                names.add(quiz["name"].lower())
+                stored.append(quiz)
+                done.append(quiz["name"])
+            if done:
+                write_json("quizzes.json", stored)
+        return done, errors
+
     def delete(self, qid):
         with self.lock:
             items = [q for q in self.all() if q["id"] != qid]
@@ -582,6 +606,24 @@ class Handler(BaseHTTPRequestHandler):
                 return self.fail("Nur am Spiel-PC erlaubt.", 403)
             if p == "/api/quizzes":
                 return self.send_json(self.server.quizzes.save(data))
+            if p == "/api/quizzes/import":
+                payload = data.get("data")
+                if isinstance(payload, dict) and isinstance(payload.get("quizzes"), list):
+                    items = payload["quizzes"]
+                elif isinstance(payload, dict) and isinstance(payload.get("quiz"), dict):
+                    items = [payload["quiz"]]
+                elif isinstance(payload, dict) and "questions" in payload:
+                    items = [payload]
+                elif isinstance(payload, list):
+                    items = payload
+                else:
+                    return self.fail("Das ist keine gültige Fragerunden-Datei.")
+                if not items or len(items) > 50:
+                    return self.fail("Keine (oder zu viele) Fragerunden in der Datei.")
+                done, errors = self.server.quizzes.import_many(items)
+                if not done:
+                    return self.fail("Nichts importiert. " + " ".join(errors))
+                return self.send_json({"imported": done, "errors": errors})
             if p == "/api/quizzes/delete":
                 qid = data.get("id")
                 with game.lock:

@@ -38,6 +38,38 @@ async function refreshStatus() {
   if (!current && key !== refreshStatus.key) { refreshStatus.key = key; renderList(); }
 }
 
+// ---------- Import / Export
+const FORMAT = 'quizrunde';
+function downloadJson(filename, obj) {
+  const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = filename;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+function slug(s) { return (s || 'fragerunde').toLowerCase().replace(/[^a-z0-9äöüß]+/gi, '-').replace(/^-+|-+$/g, '').slice(0, 50) || 'fragerunde'; }
+function exportQuiz(z) {
+  downloadJson(slug(z.name) + '.quizrunde.json',
+    { format: FORMAT, version: 1, quiz: { name: z.name, questions: z.questions } });
+}
+function pickFiles() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.json,application/json'; inp.multiple = true;
+  inp.onchange = () => guard(async () => {
+    const ok = [], bad = [];
+    for (const f of inp.files) {
+      let data;
+      try { data = JSON.parse(await f.text()); } catch (e) { bad.push(`${f.name}: keine gültige JSON-Datei`); continue; }
+      try { const r = await api('/api/quizzes/import', { data }); ok.push(...r.imported); bad.push(...r.errors.map(e => `${f.name}: ${e}`)); }
+      catch (e) { bad.push(`${f.name}: ${e.message}`); }
+    }
+    await loadQuizzes(); renderList();
+    if (ok.length) msg(`Importiert: ${ok.join(', ')}` + (bad.length ? ` – Probleme: ${bad.join(' | ')}` : ''), 'ok');
+    else msg(bad.join(' | ') || 'Keine Datei gewählt.');
+  });
+  inp.click();
+}
+
 // ---------- Liste
 async function loadQuizzes() { await guard(async () => { quizzes = await api('/api/quizzes'); }); }
 function renderList() {
@@ -46,7 +78,8 @@ function renderList() {
   head.append(el('h2', '', 'Fragerunden'));
   head.firstChild.style.cssText = 'margin:0;flex:1';
   const nb = el('button', 'btn', '+ Neue Fragerunde'); nb.onclick = () => edit(newQuiz());
-  head.append(nb); view.append(head);
+  const ib = el('button', 'btn ghost', '⬆ Importieren'); ib.onclick = pickFiles;
+  head.append(ib, nb); view.append(head);
   if (!quizzes.length) view.append(el('div', 'empty', 'Noch keine Fragerunden. Lege die erste an!'));
   const list = el('div', 'list');
   quizzes.forEach(z => {
@@ -58,13 +91,14 @@ function renderList() {
     bsel.disabled = !lobby; bsel.onclick = () => control('select', { quiz_id: z.id });
     const bgo = el('button', 'btn small', '▶ Starten'); bgo.disabled = !lobby;
     bgo.onclick = () => control('start', { quiz_id: z.id });
+    const bex = el('button', 'btn small ghost', '⬇ Export'); bex.onclick = () => exportQuiz(z);
     const bed = el('button', 'btn small ghost', 'Bearbeiten'); bed.onclick = () => edit(JSON.parse(JSON.stringify(z)));
     const bdel = el('button', 'btn small danger', 'Löschen');
     bdel.onclick = () => guard(async () => {
       if (!confirm(`„${z.name}“ wirklich löschen?`)) return;
       await api('/api/quizzes/delete', { id: z.id }); await loadQuizzes(); renderList();
     });
-    it.append(nm, bsel, bgo, bed, bdel); list.append(it);
+    it.append(nm, bsel, bgo, bed, bex, bdel); list.append(it);
   });
   view.append(list);
   view.append(el('p', 'hint', 'Zum Starten müssen zuerst Spieler über den QR-Code im Spielbildschirm beitreten.'));

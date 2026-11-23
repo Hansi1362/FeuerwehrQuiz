@@ -36,6 +36,20 @@ bzw. Firewall-Freigabe für Port 8000 erlauben.
 **Punkte:** Wer als Erstes richtig antwortet, bekommt 1000, der Zweite 900, … mindestens 100.
 Bei Fragen mit mehreren richtigen Antworten zählt nur die vollständig richtige Auswahl.
 
+## Fragenersteller (eigenständig) und Import
+
+Im Ordner `Fragenersteller/` liegt die Datei **`fragenersteller.html`**. Sie läuft komplett für sich:
+per Doppelklick im Browser öffnen – kein Server, kein Python, keine Internetverbindung nötig.
+Man kann sie per E-Mail/USB an andere weitergeben, die dann Fragen vorbereiten.
+
+1. Im Fragenersteller Runde anlegen (gleicher Editor wie im Admin). Der Entwurf wird automatisch im Browser gespeichert.
+2. **Exportieren** → es entsteht eine Datei `name.quizrunde.json`.
+3. Im Quiz-Admin (`/admin`) auf **⬆ Importieren** klicken und die Datei(en) wählen (mehrere gleichzeitig möglich).
+   Gleiche Namen werden nicht überschrieben, sondern als „Name (2)“ angelegt.
+4. Umgekehrt: Im Admin gibt es pro Runde **⬇ Export**, und im Fragenersteller lädt **⬆ Datei laden** eine Datei zum Weiterbearbeiten.
+
+Wichtig: Der Import ist nur am Spiel-PC möglich (wie das ganze Admin).
+
 ## Feuerwehr-Design anpassen
 
 * **Name der Wehr:** in `DB/settings.json` bei `"title"` eintragen, z. B. `"FF Musterstadt – Quiz"`.
@@ -62,3 +76,4 @@ Bei Fragen mit mehreren richtigen Antworten zählt nur die vollständig richtige
 * `server.py` – Webserver, Spiellogik, JSON-Speicher
 * `qr.py` – QR-Code-Generator (ohne Zusatzpakete)
 * `web/` – Oberflächen (`host`, `play`, `admin`)
+* `Fragenersteller/fragenersteller.html` – eigenständiges Tool zum Erstellen von Fragerunden

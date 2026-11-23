@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feuerwehr-Quiz – Fragenersteller</title>
+<style>
+/* Feuerwehr-Design: Signalrot, Anthrazit, Warngelb */
+:root {
+  --bg: #141211; --bg2: #26221f; --fg: #f6f3ef; --muted: #aaa39b; --accent: #d6001c; --accent2: #ff6a13; --yellow: #ffd400;
+  --line: #4a4440;
+  --c0: #d6001c; --c1: #1769e0; --c2: #f2b705; --c3: #1f9d55;
+  --yes: #1f9d55; --no: #d6001c;
+  --radius: 16px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: radial-gradient(circle at 15% 0%, #3d1511 0%, var(--bg) 55%);
+  color: var(--fg); -webkit-tap-highlight-color: transparent;
+}
+/* Absperrband oben */
+body::before {
+  content: ""; position: fixed; top: 0; left: 0; right: 0; height: 8px; z-index: 50;
+  background: repeating-linear-gradient(-45deg, #d6001c 0 14px, #f6f3ef 14px 28px);
+}
+.display { font-family: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif; text-transform: uppercase; letter-spacing: .04em; font-weight: 400; }
+button { font: inherit; cursor: pointer; border: 0; color: inherit; }
+input, textarea, select { font: inherit; color: inherit; }
+.hidden { display: none !important; }
+.brand { display: flex; align-items: center; gap: 1.2rem; }
+.brand img { height: clamp(3.5rem, 11vh, 7rem); width: auto; }
+
+/* Buttons */
+.btn {
+  background: var(--accent); color: #fff; padding: .7em 1.3em; border-radius: 10px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .04em; transition: transform .08s, filter .15s;
+}
+.btn:hover { filter: brightness(1.15); }
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn.ghost { background: rgba(255,255,255,.1); }
+.btn.danger { background: #8f1020; }
+.btn.small { padding: .4em .8em; font-size: .8rem; border-radius: 8px; }
+
+/* Optionsfarben (Gelb bekommt dunkle Schrift) */
+.c0 { --oc: var(--c0); } .c1 { --oc: var(--c1); } .c2 { --oc: var(--c2); } .c3 { --oc: var(--c3); }
+.cyes { --oc: var(--yes); } .cno { --oc: var(--no); }
+.opts .c2, .answers .c2 { color: #1a1200; }
+
+/* Timer */
+.bar { height: 12px; background: rgba(255,255,255,.12); border-radius: 99px; overflow: hidden; }
+.bar > i { display: block; height: 100%; background: linear-gradient(90deg, #ffd400, #ff8a00); border-radius: 99px; }
+.bar > i.low { background: linear-gradient(90deg, #ff6a13, #d6001c); animation: blink 1s infinite; }
+@keyframes blink { 50% { opacity: .55; } }
+
+
+  body { height: auto; min-height: 100%; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  .top { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .top h1 { margin: 0; font-size: 2rem; flex: 1; }
+  a.btn { text-decoration: none; display: inline-block; }
+  .status { background: var(--bg2); border-radius: 14px; padding: .8rem 1rem; display: flex; gap: .8rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.2rem; }
+  .status .grow { flex: 1; color: var(--muted); }
+  .status b { color: var(--fg); }
+  .list { display: flex; flex-direction: column; gap: .8rem; }
+  .item { background: var(--bg2); border-radius: 14px; padding: 1rem; display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; border: 2px solid transparent; }
+  .item.sel { border-color: var(--yellow); }
+  .item .nm { flex: 1; min-width: 10rem; }
+  .item .nm b { font-size: 1.1rem; } .item .nm span { color: var(--muted); font-size: .9rem; display: block; }
+  .field { display: flex; flex-direction: column; gap: .3rem; margin-bottom: 1rem; }
+  .field label, .lbl { color: var(--muted); font-size: .85rem; font-weight: 600; }
+  input[type=text], input[type=number], textarea, select { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: .6rem .8rem; width: 100%; }
+  textarea { resize: vertical; min-height: 4.2rem; }
+  input:focus, textarea:focus, select:focus { outline: 2px solid var(--accent); border-color: transparent; }
+  .q { background: var(--bg2); border-radius: 14px; padding: 1rem; margin-bottom: 1rem; }
+  .qtop { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; margin-bottom: .8rem; }
+  .qtop .num { font-weight: 800; font-size: 1.1rem; }
+  .qtop select { width: auto; flex: 1; min-width: 12rem; }
+  .qtop .time { display: flex; align-items: center; gap: .4rem; color: var(--muted); font-size: .85rem; }
+  .qtop .time input { width: 5rem; }
+  .opt { display: flex; align-items: center; gap: .6rem; margin-top: .5rem; }
+  .opt .tag { flex: none; width: 2rem; height: 2rem; border-radius: 8px; background: var(--oc); display: grid; place-items: center; font-weight: 800; }
+  .opt input[type=checkbox], .opt input[type=radio] { width: 1.4rem; height: 1.4rem; accent-color: #5ee4a3; flex: none; }
+  .yn { display: flex; gap: 1rem; }
+  .yn label { flex: 1; display: flex; align-items: center; gap: .6rem; padding: .8rem 1rem; border-radius: 10px; background: var(--bg); cursor: pointer; font-weight: 700; }
+  .yn input { accent-color: #5ee4a3; width: 1.3rem; height: 1.3rem; }
+  .actions { display: flex; gap: .6rem; flex-wrap: wrap; position: sticky; bottom: 0; background: linear-gradient(transparent, var(--bg) 40%); padding: 1.5rem 0 1rem; }
+  .msg { padding: .7rem 1rem; border-radius: 10px; margin-bottom: 1rem; }
+  .msg.err { background: #5b1b28; } .msg.ok { background: #1b4b2c; }
+  .empty { color: var(--muted); text-align: center; padding: 2rem; }
+
+.hintline { color: var(--muted); font-size: .9rem; margin: 0 0 1.2rem; }
+.errlist { margin: .2rem 0 0 1.1rem; padding: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1 class="display">🚒 Fragenersteller</h1>
+    <button class="btn ghost" id="bNew">Neue Runde</button>
+    <button class="btn ghost" id="bLoad">⬆ Datei laden</button>
+    <button class="btn" id="bExport">⬇ Exportieren</button>
+  </div>
+  <p class="hintline">Erstelle hier eine Fragerunde und exportiere sie als Datei. Der Quiz-Betreiber importiert die Datei im Admin-Bereich des Quiz-Spiels. Dein Entwurf wird automatisch in diesem Browser gespeichert.</p>
+  <div id="msg"></div>
+  <div id="view"></div>
+</div>
+<input type="file" id="file" accept=".json,application/json" class="hidden">
+<script>
+const FORMAT = 'quizrunde', STORE = 'fragenersteller_entwurf';
+const view = document.getElementById('view');
+
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; }
+
+function newQuestion(type) {
+  return type === 'yesno'
+    ? { type: 'yesno', text: '', options: ['Ja', 'Nein'], correct: [0], time: 15 }
+    : { type: 'multi', text: '', options: ['', '', '', ''], correct: [0], time: 20 };
+}
+function newQuiz() { return { name: '', questions: [newQuestion('multi')] }; }
+
+// Beliebige Eingabe (Export-Datei, nackte Runde, Liste) in eine bearbeitbare Runde umwandeln
+function normalize(d) {
+  if (Array.isArray(d)) d = d[0];
+  if (d && Array.isArray(d.quizzes)) d = d.quizzes[0];
+  if (d && d.quiz) d = d.quiz;
+  if (!d || !Array.isArray(d.questions) || !d.questions.length) return null;
+  const qs = d.questions.map(q => {
+    const type = q && q.type === 'yesno' ? 'yesno' : 'multi';
+    const n = newQuestion(type);
+    n.text = String(q && q.text || '');
+    if (type === 'multi' && Array.isArray(q.options)) n.options = [0, 1, 2, 3].map(i => String(q.options[i] || ''));
+    const c = Array.isArray(q && q.correct) ? q.correct.map(Number).filter(x => x >= 0 && x < n.options.length) : [];
+    n.correct = c.length ? [...new Set(c)].sort() : [0];
+    if (type === 'yesno') n.correct = [n.correct[0]];
+    n.time = Math.max(5, Math.min(120, parseInt(q && q.time, 10) || n.time));
+    return n;
+  });
+  return { name: String(d.name || ''), questions: qs };
+}
+
+let quiz = (() => { try { return normalize(JSON.parse(localStorage.getItem(STORE))); } catch (e) { return null; } })() || newQuiz();
+function persist() { try { localStorage.setItem(STORE, JSON.stringify(quiz)); } catch (e) { /* z. B. file:// ohne Speicher */ } }
+
+function msg(content, kind) {
+  const m = document.getElementById('msg'); m.replaceChildren();
+  if (!content) return;
+  const box = el('div', 'msg ' + (kind || 'err'));
+  if (Array.isArray(content)) { box.append('Bitte noch korrigieren:'); const ul = el('ul', 'errlist'); content.forEach(t => ul.append(el('li', '', t))); box.append(ul); }
+  else box.textContent = content;
+  m.append(box);
+  if (kind === 'ok') { clearTimeout(msg.h); msg.h = setTimeout(() => m.replaceChildren(), 5000); }
+}
+
+function validate() {
+  const errs = [];
+  if (!quiz.name.trim()) errs.push('Die Fragerunde braucht einen Namen.');
+  quiz.questions.forEach((q, i) => {
+    const n = i + 1;
+    if (!q.text.trim()) errs.push(`Frage ${n}: Fragetext fehlt.`);
+    if (q.type === 'multi' && q.options.some(o => !o.trim())) errs.push(`Frage ${n}: alle 4 Antworten müssen ausgefüllt sein.`);
+    if (!q.correct.length) errs.push(`Frage ${n}: mindestens eine richtige Antwort wählen.`);
+  });
+  return errs;
+}
+
+function slug(s) { return (s || '').toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50) || 'fragerunde'; }
+
+function exportFile() {
+  const errs = validate();
+  if (errs.length) return msg(errs);
+  const out = {
+    format: FORMAT, version: 1,
+    quiz: {
+      name: quiz.name.trim(),
+      questions: quiz.questions.map(q => ({
+        type: q.type, text: q.text.trim(),
+        options: q.type === 'yesno' ? ['Ja', 'Nein'] : q.options.map(o => o.trim()),
+        correct: [...q.correct].sort(), time: Math.max(5, Math.min(120, q.time || 20)),
+      })),
+    },
+  };
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = slug(quiz.name) + '.quizrunde.json';
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  msg(`Exportiert als „${a.download}“. Diese Datei im Admin-Bereich des Quiz-Spiels importieren.`, 'ok');
+}
+
+function render() {
+  view.replaceChildren();
+  const f = el('div', 'field'); f.append(el('label', '', 'Name der Fragerunde'));
+  const name = el('input'); name.type = 'text'; name.maxLength = 80; name.value = quiz.name; name.placeholder = 'z. B. Brandschutz Grundlagen';
+  name.oninput = () => { quiz.name = name.value; persist(); };
+  f.append(name); view.append(f);
+  quiz.questions.forEach((q, i) => view.append(questionCard(q, i)));
+  const bar = el('div', 'actions');
+  const a1 = el('button', 'btn ghost', '+ Frage mit 4 Antworten'); a1.onclick = () => { quiz.questions.push(newQuestion('multi')); persist(); render(); window.scrollTo(0, document.body.scrollHeight); };
+  const a2 = el('button', 'btn ghost', '+ Ja/Nein-Frage'); a2.onclick = () => { quiz.questions.push(newQuestion('yesno')); persist(); render(); window.scrollTo(0, document.body.scrollHeight); };
+  const ex = el('button', 'btn', '⬇ Exportieren'); ex.onclick = exportFile;
+  bar.append(a1, a2, ex, el('span', 'hintline', `${quiz.questions.length} Fragen`));
+  bar.lastChild.style.cssText = 'align-self:center;margin:0 0 0 .5rem';
+  view.append(bar);
+}
+
+function questionCard(q, qi) {
+  const card = el('div', 'q'), top = el('div', 'qtop');
+  top.append(el('span', 'num', `Frage ${qi + 1}`));
+  const sel = el('select');
+  sel.append(new Option('4 Antworten (eine oder mehrere richtig)', 'multi'), new Option('Ja / Nein', 'yesno'));
+  sel.value = q.type;
+  sel.onchange = () => { const keep = q.text, t = q.time; Object.assign(q, newQuestion(sel.value), { text: keep, time: t }); persist(); render(); };
+  const tw = el('label', 'time'); tw.append('Zeit (s)');
+  const time = el('input'); time.type = 'number'; time.min = 5; time.max = 120; time.value = q.time;
+  time.oninput = () => { q.time = parseInt(time.value, 10) || 20; persist(); }; tw.append(time);
+  const up = el('button', 'btn small ghost', '↑'), down = el('button', 'btn small ghost', '↓'), del = el('button', 'btn small danger', '🗑');
+  up.disabled = qi === 0; down.disabled = qi === quiz.questions.length - 1; del.disabled = quiz.questions.length === 1;
+  const swap = j => { const a = quiz.questions; [a[qi], a[j]] = [a[j], a[qi]]; persist(); render(); };
+  up.onclick = () => swap(qi - 1); down.onclick = () => swap(qi + 1);
+  del.onclick = () => { quiz.questions.splice(qi, 1); persist(); render(); };
+  top.append(sel, tw, up, down, del); card.append(top);
+
+  const ta = el('textarea'); ta.placeholder = 'Fragetext'; ta.maxLength = 300; ta.value = q.text;
+  ta.oninput = () => { q.text = ta.value; persist(); }; card.append(ta);
+
+  if (q.type === 'yesno') {
+    const l = el('div', 'lbl', 'Richtige Antwort'); l.style.margin = '.8rem 0 .4rem'; card.append(l);
+    const yn = el('div', 'yn');
+    ['Ja', 'Nein'].forEach((t, i) => {
+      const lab = el('label'), r = el('input'); r.type = 'radio'; r.name = 'yn' + qi; r.checked = q.correct[0] === i;
+      r.onchange = () => { q.correct = [i]; persist(); }; lab.append(r, t); yn.append(lab);
+    });
+    card.append(yn);
+  } else {
+    const l = el('div', 'lbl', 'Antworten – Haken setzen bei allen richtigen'); l.style.margin = '.8rem 0 .2rem'; card.append(l);
+    q.options.forEach((t, i) => {
+      const row = el('div', 'opt c' + i);
+      const cb = el('input'); cb.type = 'checkbox'; cb.checked = q.correct.includes(i); cb.title = 'richtig';
+      cb.onchange = () => { q.correct = cb.checked ? [...new Set([...q.correct, i])].sort() : q.correct.filter(c => c !== i); persist(); };
+      const inp = el('input'); inp.type = 'text'; inp.maxLength = 120; inp.placeholder = `Antwort ${i + 1}`; inp.value = t;
+      inp.oninput = () => { q.options[i] = inp.value; persist(); };
+      row.append(el('span', 'tag', String(i + 1)), inp, cb); card.append(row);
+    });
+  }
+  return card;
+}
+
+const fileInput = document.getElementById('file');
+document.getElementById('bExport').onclick = exportFile;
+document.getElementById('bNew').onclick = () => {
+  const empty = !quiz.name.trim() && quiz.questions.length === 1 && !quiz.questions[0].text.trim();
+  if (empty || confirm('Aktuellen Entwurf verwerfen und eine neue Runde beginnen?\n(Exportiere ihn vorher, wenn du ihn behalten willst.)')) { quiz = newQuiz(); persist(); msg(''); render(); }
+};
+document.getElementById('bLoad').onclick = () => fileInput.click();
+fileInput.onchange = async () => {
+  const f = fileInput.files[0]; fileInput.value = '';
+  if (!f) return;
+  let loaded = null;
+  try { loaded = normalize(JSON.parse(await f.text())); } catch (e) { /* unten */ }
+  if (!loaded) return msg('Die Datei konnte nicht gelesen werden – ist es eine exportierte Fragerunde (.json)?');
+  quiz = loaded; persist(); msg(`„${f.name}“ geladen.`, 'ok'); render();
+};
+render();
+</script>
+</body>
+</html>

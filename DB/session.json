@@ -1,6 +1,6 @@
 {
   "phase": "lobby",
-  "quiz_id": "feuerwehr",
+  "quiz_id": null,
   "q_index": -1,
   "players": {},
   "answers": {}

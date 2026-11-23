@@ -72,5 +72,96 @@
         "time": 15
       }
     ]
+  },
+  {
+    "id": "beispiel",
+    "name": "Beispiel-Quiz",
+    "questions": [
+      {
+        "type": "yesno",
+        "text": "Die Erde ist rund.",
+        "options": [
+          "Ja",
+          "Nein"
+        ],
+        "correct": [
+          0
+        ],
+        "time": 10
+      },
+      {
+        "type": "multi",
+        "text": "Wie heißt die Hauptstadt von Frankreich?",
+        "options": [
+          "Berlin",
+          "Paris",
+          "Madrid",
+          "Rom"
+        ],
+        "correct": [
+          1
+        ],
+        "time": 15
+      },
+      {
+        "type": "multi",
+        "text": "Welche dieser Tiere sind Säugetiere?",
+        "options": [
+          "Delfin",
+          "Haifisch",
+          "Fledermaus",
+          "Forelle"
+        ],
+        "correct": [
+          0,
+          2
+        ],
+        "time": 20
+      },
+      {
+        "type": "yesno",
+        "text": "Python ist eine Schlange und eine Programmiersprache.",
+        "options": [
+          "Ja",
+          "Nein"
+        ],
+        "correct": [
+          0
+        ],
+        "time": 10
+      }
+    ]
+  },
+  {
+    "id": "ce87bc95",
+    "name": "Testfragen",
+    "questions": [
+      {
+        "type": "multi",
+        "text": "Wie viel Wasser gibt ein C-Mehrzweckstrahlrohr pro Minute ab, ohne Mundstück",
+        "options": [
+          "400",
+          "200",
+          "100",
+          "50"
+        ],
+        "correct": [
+          0
+        ],
+        "time": 20
+      },
+      {
+        "type": "yesno",
+        "text": "Ist Feuer gefährlich?",
+        "options": [
+          "Ja",
+          "Nein"
+        ],
+        "correct": [
+          0
+        ],
+        "time": 15
+      }
+    ]
   }
 ]
